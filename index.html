@@ -1,0 +1,99 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Kevin.go.k Consultation Booking</title>
+  <style>
+    *{box-sizing:border-box}
+    body{font-family:Arial,sans-serif;background:#f5f7fb;margin:0;color:#172033}
+    .wrap{max-width:620px;margin:30px auto;padding:20px}
+    .card{background:white;border-radius:18px;padding:24px;box-shadow:0 8px 30px rgba(0,0,0,.08)}
+    h1{margin-top:0}
+    label{display:block;margin:14px 0 6px;font-weight:700}
+    input,textarea{width:100%;padding:12px;border:1px solid #ccd3df;border-radius:10px;font-size:16px}
+    textarea{min-height:90px;resize:vertical}
+    .price{font-size:22px;font-weight:800;margin:18px 0}
+    button{width:100%;padding:14px;border:0;border-radius:10px;background:#198754;color:white;font-size:17px;font-weight:700;cursor:pointer}
+    button:disabled{opacity:.6}
+    .hint{font-size:14px;color:#5c6678}
+    #message{margin-top:16px;padding:12px;border-radius:10px;display:none}
+    .ok{background:#e8f7ee;color:#176b3a}
+    .err{background:#fdecec;color:#9b1c1c}
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="card">
+      <h1>Kevin.go.k Consultation Booking</h1>
+      <p class="hint">Book a consultation and pay securely with M-Pesa.</p>
+
+      <div class="price">Consultation: KSh 1,000</div>
+
+      <form id="bookingForm">
+        <label>Full name</label>
+        <input name="name" required>
+
+        <label>Email</label>
+        <input name="email" type="email" required>
+
+        <label>M-Pesa phone number</label>
+        <input name="phone" placeholder="07XXXXXXXX" inputmode="tel" required>
+        <p class="hint">The STK Push will be sent to this number.</p>
+
+        <label>Consultation date</label>
+        <input name="bookingDate" type="date" required>
+
+        <label>Consultation time</label>
+        <input name="bookingTime" type="time" required>
+
+        <label>Notes (optional)</label>
+        <textarea name="notes"></textarea>
+
+        <button id="payBtn" type="submit">Pay KSh 1,000 with M-Pesa</button>
+        <div id="message"></div>
+      </form>
+    </div>
+  </div>
+
+  <script>
+    const form = document.getElementById("bookingForm");
+    const button = document.getElementById("payBtn");
+    const message = document.getElementById("message");
+
+    form.addEventListener("submit", async (event) => {
+      event.preventDefault();
+      button.disabled = true;
+      button.textContent = "Sending M-Pesa prompt...";
+
+      const data = Object.fromEntries(new FormData(form).entries());
+
+      try {
+        const response = await fetch("/api/mpesa/stkpush", {
+          method: "POST",
+          headers: {"Content-Type":"application/json"},
+          body: JSON.stringify(data)
+        });
+
+        const result = await response.json();
+        message.style.display = "block";
+        message.className = result.ok ? "ok" : "err";
+        message.textContent = result.message || "Request completed.";
+
+        if (result.ok) {
+          button.textContent = "M-Pesa prompt sent";
+        } else {
+          button.disabled = false;
+          button.textContent = "Pay KSh 1,000 with M-Pesa";
+        }
+      } catch (error) {
+        message.style.display = "block";
+        message.className = "err";
+        message.textContent = "Could not connect to the payment server.";
+        button.disabled = false;
+        button.textContent = "Pay KSh 1,000 with M-Pesa";
+      }
+    });
+  </script>
+</body>
+</html>
