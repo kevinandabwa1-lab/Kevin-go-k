@@ -7,7 +7,7 @@ require("dotenv").config();
 const app = express();
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-app.use(express.static(path.join(__dirname, "public")));
+app.get("/"c(path.join(__dirname,"index.htlm));
 
 const PORT = process.env.PORT || 3000;
 const AMOUNT = 1000;
@@ -163,6 +163,6 @@ app.get("/api/health", (req, res) => {
   res.json({ ok: true, service: "Kevin.go.k M-Pesa backend", amount: AMOUNT });
 });
 
-app.listen(PORT, () => {
+app.listen(PORT, "0.0.0.0",()=>
   console.log(`Kevin.go.k server running on port ${PORT}`);
 });
