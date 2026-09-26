@@ -8,7 +8,7 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.get("/"c(path.join(__dirname,"index.htlm));
 
-const PORT = process.env.PORT || 3000;
+const PORT = (process.env.PORT )|| 3000;
 const AMOUNT = 1000;
 
 function mpesaBaseUrl() {
